@@ -1,4 +1,4 @@
-const { fancname } = require("../Model/stestmodel")
+const { fancname, deleteSalaryRecordById } = require("../Model/stestmodel")
 
 async function salary(req,res){
     console.log("Accepted")
@@ -21,4 +21,34 @@ async function salary(req,res){
     }
 
 }
-module.exports={salary}
+
+async function deleteSalary(req, res) {
+    try {
+        // Get the salary_id from the URL parameters (e.g., from /iv/salary/10)
+        const { id } = req.params;
+
+        const result = await deleteSalaryRecordById(id);
+
+        // Check if any row was actually deleted
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Salary record with ID ${id} not found.`
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Salary record with ID ${id} deleted successfully.`
+        });
+
+    } catch (error) {
+        console.error("Error in deleteSalary controller:", error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while deleting the salary record."
+        });
+    }
+}
+
+module.exports={salary,deleteSalary}
