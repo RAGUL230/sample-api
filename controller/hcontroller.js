@@ -1,4 +1,4 @@
-const { funcname ,getAllEmployees,getEmployeeById,updateEmployeeById,patchEmployeeById, createAttendanceRecord,getAttendenceById} = require("../Model/TestModel")
+const { funcname ,getAllEmployees,getEmployeeById,updateEmployeeById,patchEmployeeById, createAttendanceRecord,getAttendenceById,updateNotesById} = require("../Model/TestModel")
 
 async function happy(req,res){
     console.log("Accepted")
@@ -189,7 +189,43 @@ async function getAttendance(req, res) {
         });
     }
 }
+async function updateAttendanceNotes(req, res) {
+    try {
+        const { id } = req.params; // Get the attendance_id from the URL
+        const { notes } = req.body; // Get the new notes from the body
+
+        // Validate that 'notes' was actually sent in the request body
+        if (notes === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: "The 'notes' field is required in the body."
+            });
+        }
+
+        const result = await updateNotesById(id, notes);
+
+        // Check if any row was actually updated
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Attendance record with ID ${id} not found.`
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Notes updated for attendance record ID ${id}.`
+        });
+
+    } catch (error) {
+        console.error("Error in updateAttendanceNotes controller:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error while updating notes."
+        });
+    }
+}
 
 
 
-module.exports={happy,getEmployees,getEmployee,updateEmployee,patchEmployee,addAttendance,getAttendance}
+module.exports={happy,getEmployees,getEmployee,updateEmployee,patchEmployee,addAttendance,getAttendance,updateAttendanceNotes}

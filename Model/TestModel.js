@@ -85,9 +85,18 @@ async function getAttendenceById(id) {
     const [rows] = await db.query(query, [id]);
     return rows[0]; // Return the first object found, or undefined if not found
 }
+async function updateNotesById(attendanceId, notes) {
+    const query = `
+        UPDATE employee.attendance 
+        SET notes = ? 
+        WHERE employee_id = ?
+    `;
+
+    const [result] = await db.query(query, [notes, attendanceId]);
+    return result;
+}
 
 
-
-module.exports = {funcname,getAllEmployees,getEmployeeById,updateEmployeeById,patchEmployeeById,createAttendanceRecord,getAttendenceById};
+module.exports = {funcname,getAllEmployees,getEmployeeById,updateEmployeeById,patchEmployeeById,createAttendanceRecord,getAttendenceById,updateNotesById};
 
 
